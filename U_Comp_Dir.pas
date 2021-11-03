@@ -142,11 +142,19 @@ begin
 end;
 
 
-function CompassDirectionOf3(const inBearing : double) : TCompassDirection;
 const
-  DEGREES_PER_DIRECTION = 360 div (Ord(High(TCompassDirection)) + 1) div 2;
+  halfpoints  : array [ 0..31 ] of TCompassDirection
+					  = (           cdNorth, cdNNE, cdNNE, cdNE, cdNE, cdENE, cdENE,
+						     cdEast,  cdEast,  cdESE, cdESE, cdSE, cdSE, cdSSE, cdSSE,
+                 cdSouth, cdSouth, cdSSW, cdSSW, cdSW, cdSW, cdWSW, cdWSW,
+						     cdWest,  cdWest,  cdWNW, cdWNW, cdNW, cdNW, cdNNW, cdNNW, cdNorth );
+
+const
+  DEGREES_PER_DIRECTION_2 = 360 div (Ord(High(TCompassDirection)) + 1) div 2;
+
+function CompassDirectionOf3(const inBearing : double) : TCompassDirection;
 begin
-  Result := TCompassDirection( (Round(inBearing) div DEGREES_PER_DIRECTION );
+  Result := halfpoints[ trunc( inBearing / DEGREES_PER_DIRECTION_2 ) ];
 end;
 
 
@@ -158,7 +166,7 @@ const
   DEGREES_PER_DIRECTION = 360 div (Ord(High(TCompassDirection)) + 1);
   ANTI_CLOCKWISE_OFFSET = DEGREES_PER_DIRECTION div 2;
 begin
-  Result := TCompassDirection((Round(inBearing) {+ ANTI_CLOCKWISE_OFFSET}) div DEGREES_PER_DIRECTION);
+  Result := TCompassDirection((Round(inBearing) + ANTI_CLOCKWISE_OFFSET) div DEGREES_PER_DIRECTION);
 end;
 
 

@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{08378F30-2461-40D7-A303-39E7369F616E}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Project_write_doubles.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Project_random_doubles.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="Project_write_doubles">
+        <MSBuild Projects="Project_write_doubles.dproj"/>
+    </Target>
+    <Target Name="Project_write_doubles:Clean">
+        <MSBuild Projects="Project_write_doubles.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Project_write_doubles:Make">
+        <MSBuild Projects="Project_write_doubles.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Project_random_doubles">
+        <MSBuild Projects="Project_random_doubles.dproj"/>
+    </Target>
+    <Target Name="Project_random_doubles:Clean">
+        <MSBuild Projects="Project_random_doubles.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Project_random_doubles:Make">
+        <MSBuild Projects="Project_random_doubles.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="Project_write_doubles;Project_random_doubles"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="Project_write_doubles:Clean;Project_random_doubles:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="Project_write_doubles:Make;Project_random_doubles:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
