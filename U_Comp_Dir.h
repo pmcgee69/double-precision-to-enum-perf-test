@@ -36,13 +36,6 @@ auto CompassDirnByBinary(const double inBearing) -> TCompassDirection
 {
   int I;
   //Bytes: array[0..7] of Byte absolute inBearing;
-//  B  : packed record                //
-//       x : array[0..4] of Byte;     //
-//       I : word;                    //  slower by 5 ms than doing the Byte calculation
-//       z : Byte;                    //
-//  end absolute inBearing;           //
-//
-//  var w : word := 0x3680;            // for reseach purposes ... stored as 80 36 in Win
 
 
   //auto result = cdNorth; // { edited from original post - Thanks Mark Griffiths }    // d   235 ms
@@ -141,6 +134,11 @@ auto CompassDirnByBinary(const double inBearing) -> TCompassDirection
 }
 
 
+const TCompassDirection points [ TCD ]
+					  = { cdNorth, cdNNE, cdNE, cdENE,
+						  cdEast,  cdESE, cdSE, cdSSE,
+						  cdSouth, cdSSW, cdSW, cdWSW,
+						  cdWest,  cdWNW, cdNW, cdNNW  };
 
 // Courtesy of Scott Sedgwick - ADUG User Forum - https://forums.adug.org.au/t/optimize-this-compass-directions-code/59083/12
 auto CompassDirectionOf2(const double inBearing) -> TCompassDirection
@@ -149,7 +147,8 @@ auto CompassDirectionOf2(const double inBearing) -> TCompassDirection
   const auto ANTI_CLOCKWISE_OFFSET = DEGREES_PER_DIRECTION / 2;
 
   //return TCompassDirection( int(inBearing) / DEGREES_PER_DIRECTION);
-  return TCompassDirection( ( int(inBearing) + ANTI_CLOCKWISE_OFFSET ) / DEGREES_PER_DIRECTION);
+  //return TCompassDirection( ( int(inBearing) + ANTI_CLOCKWISE_OFFSET ) / DEGREES_PER_DIRECTION);
+  return points[ int( (inBearing + ANTI_CLOCKWISE_OFFSET ) / DEGREES_PER_DIRECTION ) ];
 }
 
 
