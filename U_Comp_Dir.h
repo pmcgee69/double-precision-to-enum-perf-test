@@ -31,11 +31,6 @@ const double       d[ TCD ]
 					  = {   22.5,  45.0,  67.5,  90.0, 112.5, 135.0, 157.5, 180.0,
 						   202.5, 225.0, 247.5, 270.0, 292.5, 315.0, 337.5, 360.0 };
 
-const TCompassDirection halfpoints [ TCD*2 ]
-					  = {          cdNorth, cdNNE, cdNNE, cdNE, cdNE, cdENE, cdENE,
-						  cdEast,  cdEast,  cdESE, cdESE, cdSE, cdSE, cdSSE, cdSSE,
-						  cdSouth, cdSouth, cdSSW, cdSSW, cdSW, cdSW, cdWSW, cdWSW,
-						  cdWest,  cdWest,  cdWNW, cdWNW, cdNW, cdNW, cdNNW, cdNNW, cdNorth };
 
 auto CompassDirnByBinary(const double inBearing) -> TCompassDirection
 {
@@ -158,9 +153,15 @@ auto CompassDirectionOf2(const double inBearing) -> TCompassDirection
 }
 
 
+const TCompassDirection halfpoints [ TCD*2 ]
+					  = {          cdNorth, cdNNE, cdNNE, cdNE, cdNE, cdENE, cdENE,
+						  cdEast,  cdEast,  cdESE, cdESE, cdSE, cdSE, cdSSE, cdSSE,
+						  cdSouth, cdSouth, cdSSW, cdSSW, cdSW, cdSW, cdWSW, cdWSW,
+						  cdWest,  cdWest,  cdWNW, cdWNW, cdNW, cdNW, cdNNW, cdNNW, cdNorth };
+
 auto CompassDirectionOf3(const double inBearing) -> TCompassDirection
 {
   const auto DEGREES_PER_DIRECTION = 360 / TCD /2;
 
-  return TCompassDirection( inBearing  / DEGREES_PER_DIRECTION );
+  return halfpoints[ int (inBearing  / DEGREES_PER_DIRECTION) ];
 }

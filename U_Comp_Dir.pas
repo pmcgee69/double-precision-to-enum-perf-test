@@ -8,7 +8,8 @@ type
                        cdSouth, cdSSW, cdSW, cdWSW,
                        cdWest,  cdWNW, cdNW, cdNNW);
 
-function CompassDirectionOf2(const inBearing: double)  : TCompassDirection;
+function CompassDirectionOf2(const inBearing : double) : TCompassDirection;
+function CompassDirectionOf3(const inBearing : double) : TCompassDirection;
 function CompassDirectionOf (const inBearing : double) : TCompassDirection;
 function CompassDirnByBinary(const inBearing : double) : TCompassDirection;
 
@@ -141,11 +142,18 @@ begin
 end;
 
 
+function CompassDirectionOf3(const inBearing : double) : TCompassDirection;
+const
+  DEGREES_PER_DIRECTION = 360 div (Ord(High(TCompassDirection)) + 1) div 2;
+begin
+  Result := TCompassDirection( (Round(inBearing) div DEGREES_PER_DIRECTION );
+end;
+
 
 
 
 // Courtesy of Scott Sedgwick - ADUG User Forum - https://forums.adug.org.au/t/optimize-this-compass-directions-code/59083/12
-function CompassDirectionOf2(const inBearing: double): TCompassDirection;
+function CompassDirectionOf2(const inBearing : double) : TCompassDirection;
 const
   DEGREES_PER_DIRECTION = 360 div (Ord(High(TCompassDirection)) + 1);
   ANTI_CLOCKWISE_OFFSET = DEGREES_PER_DIRECTION div 2;
