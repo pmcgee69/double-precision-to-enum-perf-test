@@ -33,6 +33,13 @@ function CompassDirnByBinary(const inBearing : double) : TCompassDirection;
 var
   I  : integer;
   Bytes: array[0..7] of Byte absolute inBearing;
+//  B  : packed record                //
+//       x : array[0..4] of Byte;     //
+//       I : word;                    //  slower by 5 ms than doing the Byte calculation
+//       z : Byte;                    //
+//  end absolute inBearing;           //
+//
+//  var w : word := $3680;            // for reseach purposes ... stored as 80 36 in Win
 begin
 
 //  Result := cdNorth; { edited from original post - Thanks Mark Griffiths }    // 235 ms
@@ -45,7 +52,7 @@ begin
 // - - - - - - - - -
 
   //I := inBearing.Bytes[6] shl 8 + inBearing.Bytes[5];
-  I := Bytes[6] shl 8 + Bytes[5];
+  I := Bytes[6] shl 8 + Bytes[5];                                               // saves 35 ms
 
 // - - - - - - - - -
 
@@ -65,7 +72,41 @@ begin
 
 // - - - - - - - - -
 
-    if I < cp[ 0] then begin Result := TCompassDirection( 0); exit; end       // 150 ms
+//    if I < CompPoints[ cdNorth] then begin Result := cdNorth; exit; end       // 135 ms
+//    else
+//    if I < CompPoints[ cdNNE  ] then begin Result := cdNNE  ; exit; end
+//    else
+//    if I < CompPoints[ cdNE   ] then begin Result := cdNE   ; exit; end
+//    else
+//    if I < CompPoints[ cdENE  ] then begin Result := cdENE  ; exit; end
+//    else
+//    if I < CompPoints[ cdEast ] then begin Result := cdEast ; exit; end
+//    else
+//    if I < CompPoints[ cdESE  ] then begin Result := cdESE  ; exit; end
+//    else
+//    if I < CompPoints[ cdSE   ] then begin Result := cdSE   ; exit; end
+//    else
+//    if I < CompPoints[ cdSSE  ] then begin Result := cdSSE  ; exit; end
+//    else
+//    if I < CompPoints[ cdSouth] then begin Result := cdSouth; exit; end
+//    else
+//    if I < CompPoints[ cdSSW  ] then begin Result := cdSSW  ; exit; end
+//    else
+//    if I < CompPoints[ cdSW   ] then begin Result := cdSW   ; exit; end
+//    else
+//    if I < CompPoints[ cdWSW  ] then begin Result := cdWSW  ; exit; end
+//    else
+//    if I < CompPoints[ cdWest ] then begin Result := cdWest ; exit; end
+//    else
+//    if I < CompPoints[ cdWNW  ] then begin Result := cdWNW  ; exit; end
+//    else
+//    if I < CompPoints[ cdNW   ] then begin Result := cdNW   ; exit; end
+//    else
+//    if I < CompPoints[ cdNNW  ] then begin Result := cdNNW  ; exit; end
+
+// - - - - - - - - -
+
+    if I < cp[ 0] then begin Result := TCompassDirection( 0); exit; end       // 135 ms
     else
     if I < cp[ 1] then begin Result := TCompassDirection( 1); exit; end
     else
@@ -103,7 +144,7 @@ end;
 
 
 
-
+// Courtesy of Scott Sedgwick - ADUG User Forum - https://forums.adug.org.au/t/optimize-this-compass-directions-code/59083/12
 function CompassDirectionOf2(const inBearing: double): TCompassDirection;
 const
   DEGREES_PER_DIRECTION = 360 div (Ord(High(TCompassDirection)) + 1);
@@ -113,6 +154,7 @@ begin
 end;
 
 
+// Courtesy of Lachlan Gemmell - ADUG User Forum - https://forums.adug.org.au/t/optimize-this-compass-directions-code/59083/1
 function CompassDirectionOf(const inBearing : double) : TCompassDirection;
 const
   DEGREES_PER_DIRECTION = 360 / (Ord(High(TCompassDirection)) + 1);
