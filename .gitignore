@@ -6,4 +6,7 @@
 *.patch
 *.diff
 
+*.res
+*.json
 __history
+Win32
