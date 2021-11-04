@@ -30,25 +30,18 @@ const
                       = (   22.5,  45.0,  67.5,  90.0, 112.5, 135.0, 157.5, 180.0,
                            202.5, 225.0, 247.5, 270.0, 292.5, 315.0, 337.5, 360.0 );
 
+
 function CompassDirnByBinary(const inBearing : double) : TCompassDirection;
 var
   I  : integer;
   Bytes: array[0..7] of Byte absolute inBearing;
-//  B  : packed record                //
-//       x : array[0..4] of Byte;     //
-//       I : word;                    //  slower by 5 ms than doing the Byte calculation
-//       z : Byte;                    //
-//  end absolute inBearing;           //
-//
-//  var w : word := $3680;            // for reseach purposes ... stored as 80 36 in Win
+
 begin
 
 //  Result := cdNorth; { edited from original post - Thanks Mark Griffiths }    // 235 ms
 //  for var cd := cdNorth to cdNNW do
-//      if inBearing < d[cd] then begin
-//        Result := cd;
-//        Exit;
-//      end;
+//      if inBearing < d[cd] then
+//          exit( cd );
 
 // - - - - - - - - -
 
@@ -58,99 +51,60 @@ begin
 // - - - - - - - - -
 
 //  for var cd := cdNorth to cdNNW do                                           // 175 ms
-//      if I < CompPoints[cd] then begin
-//        Result := cd;
-//        Exit;
-//      end;
+//      if I < CompPoints[cd] then
+//        exit( cd );
 
 // - - - - - - - - -
 
 //  for var cd := 0 to 15 do                                                    // 170 ms
-//      if I < cp[cd] then begin
-//        Result := TCompassDirection(cd);
-//        Exit;
-//      end;
+//      if I < cp[cd] then
+//        exit( TCompassDirection(cd) );                                        // points[cd] = slower
 
 // - - - - - - - - -
 
-//    if I < CompPoints[ cdNorth] then begin Result := cdNorth; exit; end       // 135 ms
-//    else
-//    if I < CompPoints[ cdNNE  ] then begin Result := cdNNE  ; exit; end
-//    else
-//    if I < CompPoints[ cdNE   ] then begin Result := cdNE   ; exit; end
-//    else
-//    if I < CompPoints[ cdENE  ] then begin Result := cdENE  ; exit; end
-//    else
-//    if I < CompPoints[ cdEast ] then begin Result := cdEast ; exit; end
-//    else
-//    if I < CompPoints[ cdESE  ] then begin Result := cdESE  ; exit; end
-//    else
-//    if I < CompPoints[ cdSE   ] then begin Result := cdSE   ; exit; end
-//    else
-//    if I < CompPoints[ cdSSE  ] then begin Result := cdSSE  ; exit; end
-//    else
-//    if I < CompPoints[ cdSouth] then begin Result := cdSouth; exit; end
-//    else
-//    if I < CompPoints[ cdSSW  ] then begin Result := cdSSW  ; exit; end
-//    else
-//    if I < CompPoints[ cdSW   ] then begin Result := cdSW   ; exit; end
-//    else
-//    if I < CompPoints[ cdWSW  ] then begin Result := cdWSW  ; exit; end
-//    else
-//    if I < CompPoints[ cdWest ] then begin Result := cdWest ; exit; end
-//    else
-//    if I < CompPoints[ cdWNW  ] then begin Result := cdWNW  ; exit; end
-//    else
-//    if I < CompPoints[ cdNW   ] then begin Result := cdNW   ; exit; end
-//    else
-//    if I < CompPoints[ cdNNW  ] then begin Result := cdNNW  ; exit; end
-
-// - - - - - - - - -
-
-    if I < cp[ 0] then begin Result := TCompassDirection( 0); exit; end       // 135 ms
+    if I < cp[ 0] then exit( TCompassDirection( 0) )       // 135 ms
     else
-    if I < cp[ 1] then begin Result := TCompassDirection( 1); exit; end
+    if I < cp[ 1] then exit( TCompassDirection( 1) )
     else
-    if I < cp[ 2] then begin Result := TCompassDirection( 2); exit; end
+    if I < cp[ 2] then exit( TCompassDirection( 2) )
     else
-    if I < cp[ 3] then begin Result := TCompassDirection( 3); exit; end
+    if I < cp[ 3] then exit( TCompassDirection( 3) )
     else
-    if I < cp[ 4] then begin Result := TCompassDirection( 4); exit; end
+    if I < cp[ 4] then exit( TCompassDirection( 4) )
     else
-    if I < cp[ 5] then begin Result := TCompassDirection( 5); exit; end
+    if I < cp[ 5] then exit( TCompassDirection( 5) )
     else
-    if I < cp[ 6] then begin Result := TCompassDirection( 6); exit; end
+    if I < cp[ 6] then exit( TCompassDirection( 6) )
     else
-    if I < cp[ 7] then begin Result := TCompassDirection( 7); exit; end
+    if I < cp[ 7] then exit( TCompassDirection( 7) )
     else
-    if I < cp[ 8] then begin Result := TCompassDirection( 8); exit; end
+    if I < cp[ 8] then exit( TCompassDirection( 8) )
     else
-    if I < cp[ 9] then begin Result := TCompassDirection( 9); exit; end
+    if I < cp[ 9] then exit( TCompassDirection( 9) )
     else
-    if I < cp[10] then begin Result := TCompassDirection(10); exit; end
+    if I < cp[10] then exit( TCompassDirection(10) )
     else
-    if I < cp[11] then begin Result := TCompassDirection(11); exit; end
+    if I < cp[11] then exit( TCompassDirection(11) )
     else
-    if I < cp[12] then begin Result := TCompassDirection(12); exit; end
+    if I < cp[12] then exit( TCompassDirection(12) )
     else
-    if I < cp[13] then begin Result := TCompassDirection(13); exit; end
+    if I < cp[13] then exit( TCompassDirection(13) )
     else
-    if I < cp[14] then begin Result := TCompassDirection(14); exit; end
+    if I < cp[14] then exit( TCompassDirection(14) )
     else
-    if I < cp[15] then begin Result := TCompassDirection(15); exit; end
+    if I < cp[15] then exit( TCompassDirection(15) )
 
 end;
 
 
 const
-  halfpoints  : array [ 0..31 ] of TCompassDirection
+  halfpoints  : array [ 0..32 ] of TCompassDirection
 					  = (           cdNorth, cdNNE, cdNNE, cdNE, cdNE, cdENE, cdENE,
-						     cdEast,  cdEast,  cdESE, cdESE, cdSE, cdSE, cdSSE, cdSSE,
-                 cdSouth, cdSouth, cdSSW, cdSSW, cdSW, cdSW, cdWSW, cdWSW,
-						     cdWest,  cdWest,  cdWNW, cdWNW, cdNW, cdNW, cdNNW, cdNNW, cdNorth );
+						     cdEast,  cdEast,  cdESE, cdESE, cdSE, cdSE, cdSSE, cdSSE,          // deliberate, temporary
+                 cdSouth, cdSouth, cdSSW, cdSSW, cdSW, cdSW, cdWSW, cdWSW,          // range error hack
+						     cdWest,  cdWest,  cdWNW, cdWNW, cdNW, cdNW, cdNNW, cdNNW, cdNorth, cdNorth );
 
-const
-  DEGREES_PER_DIRECTION_2 = 360 div (Ord(High(TCompassDirection)) + 1) div 2;
+  DEGREES_PER_DIRECTION_2 = 360 / (Ord(High(TCompassDirection)) + 1) / 2;
 
 function CompassDirectionOf3(const inBearing : double) : TCompassDirection;
 begin
@@ -159,6 +113,12 @@ end;
 
 
 
+const
+       points : array [ 0..15 ] of TCompassDirection
+                      = ( cdNorth, cdNNE, cdNE, cdENE,
+                          cdEast,  cdESE, cdSE, cdSSE,
+                          cdSouth, cdSSW, cdSW, cdWSW,
+                          cdWest,  cdWNW, cdNW, cdNNW  );
 
 // Courtesy of Scott Sedgwick - ADUG User Forum - https://forums.adug.org.au/t/optimize-this-compass-directions-code/59083/12
 function CompassDirectionOf2(const inBearing : double) : TCompassDirection;
@@ -167,6 +127,7 @@ const
   ANTI_CLOCKWISE_OFFSET = DEGREES_PER_DIRECTION div 2;
 begin
   Result := TCompassDirection((Round(inBearing) + ANTI_CLOCKWISE_OFFSET) div DEGREES_PER_DIRECTION);
+  //Result := points[ (Round(inBearing) + ANTI_CLOCKWISE_OFFSET) div DEGREES_PER_DIRECTION ];
 end;
 
 
