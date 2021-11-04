@@ -13,7 +13,7 @@ enum  TCompassDirection { cdNorth, cdNNE, cdNE, cdENE,
 						  cdSouth, cdSSW, cdSW, cdWSW,
 						  cdWest,  cdWNW, cdNW, cdNNW };
 
-//   CompassDirectionOf (const double inBearing) -> TCompassDirection;
+auto CompassDirectionOf (const double inBearing) -> TCompassDirection;
 auto CompassDirectionOf2(const double inBearing) -> TCompassDirection;
 auto CompassDirectionOf3(const double inBearing) -> TCompassDirection;
 auto CompassDirnByBinary(const double inBearing) -> TCompassDirection;
@@ -63,39 +63,6 @@ auto CompassDirnByBinary(const double inBearing) -> TCompassDirection
   for (int cd = 0; cd < 15; ++cd)                                                      // d   170 ms
 	  if ( I < cp[cd] )  return TCompassDirection(cd);                                 // c++ 100 ms
 
-// - - - - - - - - -
-
-//    if I < CompPoints[ cdNorth] )  { return cdNorth; }                               // d   135 ms
-//    else
-//    if I < CompPoints[ cdNNE  ] )  { return cdNNE  ; exit; end
-//    else
-//    if I < CompPoints[ cdNE   ] )  { return cdNE   ; exit; end
-//    else
-//    if I < CompPoints[ cdENE  ] )  { return cdENE  ; exit; end
-//    else
-//    if I < CompPoints[ cdEast ] )  { return cdEast ; exit; end
-//    else
-//    if I < CompPoints[ cdESE  ] )  { return cdESE  ; exit; end
-//    else
-//    if I < CompPoints[ cdSE   ] )  { return cdSE   ; exit; end
-//    else
-//    if I < CompPoints[ cdSSE  ] )  { return cdSSE  ; exit; end
-//    else
-//    if I < CompPoints[ cdSouth] )  { return cdSouth; exit; end
-//    else
-//    if I < CompPoints[ cdSSW  ] )  { return cdSSW  ; exit; end
-//    else
-//    if I < CompPoints[ cdSW   ] )  { return cdSW   ; exit; end
-//    else
-//    if I < CompPoints[ cdWSW  ] )  { return cdWSW  ; exit; end
-//    else
-//    if I < CompPoints[ cdWest ] )  { return cdWest ; exit; end
-//    else
-//    if I < CompPoints[ cdWNW  ] )  { return cdWNW  ; exit; end
-//    else
-//    if I < CompPoints[ cdNW   ] )  { return cdNW   ; exit; end
-//    else
-//    if I < CompPoints[ cdNNW  ] )  { return cdNNW  ; exit; end
 
 // - - - - - - - - -
 
@@ -152,6 +119,7 @@ auto CompassDirectionOf2(const double inBearing) -> TCompassDirection
 }
 
 
+
 const TCompassDirection halfpoints [ TCD*2 ]
 					  = {          cdNorth, cdNNE, cdNNE, cdNE, cdNE, cdENE, cdENE,
 						  cdEast,  cdEast,  cdESE, cdESE, cdSE, cdSE, cdSSE, cdSSE,
@@ -163,4 +131,77 @@ auto CompassDirectionOf3(const double inBearing) -> TCompassDirection
   const auto DEGREES_PER_DIRECTION = 360 / TCD /2;
 
   return halfpoints[ int (inBearing  / DEGREES_PER_DIRECTION) ];
+}
+
+
+
+// Courtesy of Lachlan Gemmell - ADUG User Forum - https://forums.adug.org.au/t/optimize-this-compass-directions-code/59083/1
+TCompassDirection CompassDirectionOf(const double inBearing)
+{
+  constexpr const auto DEGREES_PER_DIRECTION = 360.0 / TCD;
+  constexpr const auto ANTI_CLOCKWISE_OFFSET = DEGREES_PER_DIRECTION / 2.0;
+  constexpr const auto BOUNDARY_MARGIN       = 1;
+
+  TCompassDirection cd;
+
+  switch ( int(inBearing) ) {
+	case        0
+	 ... int( ( 1 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) - BOUNDARY_MARGIN      :      return cdNorth;
+
+	case int( ( 1 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) + BOUNDARY_MARGIN
+	 ... int( ( 2 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) - BOUNDARY_MARGIN      :      return cdNNE;
+
+	case int( ( 2 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) + BOUNDARY_MARGIN
+	 ... int( ( 3 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) - BOUNDARY_MARGIN      :      return cdNE;
+
+	case int( ( 3 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) + BOUNDARY_MARGIN
+	 ... int( ( 4 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) - BOUNDARY_MARGIN      :      return cdENE;
+
+	case int( ( 4 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) + BOUNDARY_MARGIN
+	 ... int( ( 5 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) - BOUNDARY_MARGIN      :      return cdEast;
+
+	case int( ( 5 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) + BOUNDARY_MARGIN
+	 ... int( ( 6 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) - BOUNDARY_MARGIN      :      return cdESE;
+
+	case int( ( 6 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) + BOUNDARY_MARGIN
+	 ... int( ( 7 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) - BOUNDARY_MARGIN      :      return cdSE;
+
+	case int( ( 7 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) + BOUNDARY_MARGIN
+	 ... int( ( 8 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) - BOUNDARY_MARGIN      :      return cdSSE;
+
+	case int( ( 8 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) + BOUNDARY_MARGIN
+	 ... int( ( 9 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) - BOUNDARY_MARGIN      :      return cdSouth;
+
+	case int( ( 9 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) + BOUNDARY_MARGIN
+	 ... int( (10 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) - BOUNDARY_MARGIN      :      return cdSSW;
+
+	case int( (10 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) + BOUNDARY_MARGIN
+	 ... int( (11 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) - BOUNDARY_MARGIN      :      return cdSW;
+
+	case int( (11 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) + BOUNDARY_MARGIN
+	 ... int( (12 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) - BOUNDARY_MARGIN      :      return cdWSW;
+
+	case int( (12 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) + BOUNDARY_MARGIN
+	 ... int( (13 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) - BOUNDARY_MARGIN      :      return cdWest;
+
+	case int( (13 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) + BOUNDARY_MARGIN
+	 ... int( (14 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) - BOUNDARY_MARGIN      :      return cdWNW;
+
+	case int( (14 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) + BOUNDARY_MARGIN
+	 ... int( (15 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) - BOUNDARY_MARGIN      :      return cdNW;
+
+	case int( (15 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) + BOUNDARY_MARGIN
+	 ... int( (16 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) - BOUNDARY_MARGIN      :      return cdNNW;
+
+	case int( ( 0 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) + BOUNDARY_MARGIN + 360
+	 ... 360        /*{ negative degree values converted to almost 360 degree values }*/    :      return cdNorth;
+
+	default : {     /*{ bearing is between the integer boundary margins, so do
+						an exact check against the floating point boundaries } */
+	  for (int cd = 0; cd < TCD; ++cd)
+		if ( inBearing <= (((cd + 1) * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET) )
+		  return( points[ cd ] );
+	  return cdNorth;                           /*{ edited from original post - Thanks Mark Griffiths }*/
+	}
+  }
 }
