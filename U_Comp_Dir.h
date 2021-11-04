@@ -16,6 +16,7 @@ enum  TCompassDirection { cdNorth, cdNNE, cdNE, cdENE,
 auto CompassDirectionOf (const double inBearing) -> TCompassDirection;
 auto CompassDirectionOf2(const double inBearing) -> TCompassDirection;
 auto CompassDirectionOf3(const double inBearing) -> TCompassDirection;
+auto CompassDirectionOf4(const double inBearing) -> TCompassDirection;
 auto CompassDirnByBinary(const double inBearing) -> TCompassDirection;
 
 
@@ -45,7 +46,7 @@ auto CompassDirnByBinary(const double inBearing) -> TCompassDirection
 // - - - - - - - - -
 
   //I := inBearing.Bytes[6] shl 8 + inBearing.Bytes[5];
-//  I := Bytes[6] shl 8 + Bytes[5];                                                    // d saves 35 ms
+  //  I := Bytes[6] shl 8 + Bytes[5];                                                  // d saves 35 ms
   const auto Bytes = (std::byte*)(&inBearing);
 
   I = ( (int)Bytes[6] << 8 ) + (int)Bytes[5];
@@ -101,19 +102,18 @@ auto CompassDirnByBinary(const double inBearing) -> TCompassDirection
 }
 
 
-const TCompassDirection points [ TCD ]
+const TCompassDirection points [ TCD ]                                                 // c++ 40ms using array return
 					  = { cdNorth, cdNNE, cdNE, cdENE,
 						  cdEast,  cdESE, cdSE, cdSSE,
 						  cdSouth, cdSSW, cdSW, cdWSW,
 						  cdWest,  cdWNW, cdNW, cdNNW  };
 
 // Courtesy of Scott Sedgwick - ADUG User Forum - https://forums.adug.org.au/t/optimize-this-compass-directions-code/59083/12
-auto CompassDirectionOf2(const double inBearing) -> TCompassDirection
+auto CompassDirectionOf2(const double inBearing) -> TCompassDirection                  // c++ 100ms using cast to enum
 {
   const auto DEGREES_PER_DIRECTION = 360 / TCD;
   const auto ANTI_CLOCKWISE_OFFSET = DEGREES_PER_DIRECTION / 2;
 
-  //return TCompassDirection( int(inBearing) / DEGREES_PER_DIRECTION);
   //return TCompassDirection( ( int(inBearing) + ANTI_CLOCKWISE_OFFSET ) / DEGREES_PER_DIRECTION);
   return points[ int( (inBearing + ANTI_CLOCKWISE_OFFSET ) / DEGREES_PER_DIRECTION ) ];
 }
@@ -126,7 +126,7 @@ const TCompassDirection halfpoints [ TCD*2 ]
 						  cdSouth, cdSouth, cdSSW, cdSSW, cdSW, cdSW, cdWSW, cdWSW,
 						  cdWest,  cdWest,  cdWNW, cdWNW, cdNW, cdNW, cdNNW, cdNNW, cdNorth };
 
-auto CompassDirectionOf3(const double inBearing) -> TCompassDirection
+auto CompassDirectionOf3(const double inBearing) -> TCompassDirection                  // c++ 40 ms
 {
   const auto DEGREES_PER_DIRECTION = 360 / TCD /2;
 
@@ -204,4 +204,53 @@ TCompassDirection CompassDirectionOf(const double inBearing)
 	  return cdNorth;                           /*{ edited from original post - Thanks Mark Griffiths }*/
 	}
   }
+}
+
+
+
+
+TCompassDirection CompassDirectionOf4(const double inBearing)
+{
+  constexpr const auto DEGREES_PER_DIRECTION = 360.0 / TCD;
+  constexpr const auto ANTI_CLOCKWISE_OFFSET = DEGREES_PER_DIRECTION / 2.0;
+  constexpr const auto BOUNDARY_MARGIN       = 1;
+
+  TCompassDirection cd = cdNorth;
+
+  int B = int(inBearing);
+
+  if (B < int( ( 1 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET  ))    return cdNorth;
+  else
+  if (B < int( ( 2 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET  ))    return cdNNE;
+  else
+  if (B < int( ( 3 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET  ))    return cdNE;
+  else
+  if (B < int( ( 4 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET  ))    return cdENE;
+  else
+  if (B < int( ( 5 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET  ))    return cdEast;
+  else
+  if (B < int( ( 6 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET  ))    return cdESE;
+  else
+  if (B < int( ( 7 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET  ))    return cdSE;
+  else
+  if (B < int( ( 8 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET  ))    return cdSSE;
+  else
+  if (B < int( ( 9 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET  ))    return cdSouth;
+  else
+  if (B < int( (10 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET  ))    return cdSSW;
+  else
+  if (B < int( (11 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET  ))    return cdSW;
+  else
+  if (B < int( (12 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET  ))    return cdWSW;
+  else
+  if (B < int( (13 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET  ))    return cdWest;
+  else
+  if (B < int( (14 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET  ))    return cdWNW;
+  else
+  if (B < int( (15 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET  ))    return cdNW;
+  else
+  if (B < int( (16 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET  ))    return cdNNW;
+  else
+																		   return cdNorth;
+
 }
