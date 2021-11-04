@@ -14,7 +14,6 @@ Results tl;dr
        
 A standout point was that returning an *int-cast-to-enum* was outperformed in c++ by *indexing-into-array-of-enum* ... but little difference in Delphi.
 
-The main files:
 
 The main project files
 - Project_dbl_speed.dpr 
@@ -37,7 +36,7 @@ Utility files:
 Write 10,000 doubles to a text file
 - Project_random_doubles.dpr
 
-Diagnostic program to break doubles down into binary (memory) format
+Diagnostic program to display doubles in binary (memory) format
 - Project_write_doubles.dpr 
 - Bin_Unit.pas
 
