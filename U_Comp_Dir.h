@@ -36,24 +36,23 @@ const double       d[ TCD ]
 auto CompassDirnByBinary(const double inBearing) -> TCompassDirection
 {
   int I;
-  //Bytes: array[0..7] of Byte absolute inBearing;
+  //Bytes: array[0..7] of Byte absolute inBearing;           {Delphi}
 
 
-  //auto result = cdNorth; // { edited from original post - Thanks Mark Griffiths }    // d   235 ms
-//  for (auto cd = 0; cd < TCD; ++cd)                                                  // c++ 170 ms
-//	   if ( inBearing < d[cd] )   return TCompassDirection(cd);
+//  for (auto cd = 0; cd < TCD; ++cd)                                                  // d   235 ms
+//	   if ( inBearing < d[cd] )   return TCompassDirection(cd);                        // c++ 170 ms
 
 // - - - - - - - - -
 
-  //I := inBearing.Bytes[6] shl 8 + inBearing.Bytes[5];
-  //  I := Bytes[6] shl 8 + Bytes[5];                                                  // d saves 35 ms
+  //  I := inBearing.Bytes[6] shl 8 + inBearing.Bytes[5];    {Delphi}
+  //  I := Bytes[6] shl 8 + Bytes[5];                        {Delphi}                  // d saves 35 ms
   const auto Bytes = (std::byte*)(&inBearing);
 
   I = ( (int)Bytes[6] << 8 ) + (int)Bytes[5];
 
 // - - - - - - - - -
 
-//  for var cd := cdNorth to cdNNW do                                                  // d 175 ms
+//  for var cd := cdNorth to cdNNW do                        {Delphi}                  // d 175 ms
 //	  if I < CompPoints[cd] then begin
 //		Result := cd;
 //		Exit;
@@ -61,7 +60,7 @@ auto CompassDirnByBinary(const double inBearing) -> TCompassDirection
 
 // - - - - - - - - -
 
-  for (int cd = 0; cd < 15; ++cd)                                                      // d   170 ms
+  for (int cd = 0; cd < TCD; ++cd)                                                     // d   170 ms
 	  if ( I < cp[cd] )  return TCompassDirection(cd);                                 // c++ 100 ms
 
 
@@ -101,14 +100,16 @@ auto CompassDirnByBinary(const double inBearing) -> TCompassDirection
 
 }
 
+// - - - - - - - - -
 
-const TCompassDirection points [ TCD ]                                                 // c++ 40ms using array return
+// Courtesy of Scott Sedgwick - ADUG User Forum - https://forums.adug.org.au/t/optimize-this-compass-directions-code/59083/12
+
+const TCompassDirection points [ TCD ]
 					  = { cdNorth, cdNNE, cdNE, cdENE,
 						  cdEast,  cdESE, cdSE, cdSSE,
 						  cdSouth, cdSSW, cdSW, cdWSW,
-						  cdWest,  cdWNW, cdNW, cdNNW  };
+						  cdWest,  cdWNW, cdNW, cdNNW  };                              // c++  40ms using array return
 
-// Courtesy of Scott Sedgwick - ADUG User Forum - https://forums.adug.org.au/t/optimize-this-compass-directions-code/59083/12
 auto CompassDirectionOf2(const double inBearing) -> TCompassDirection                  // c++ 100ms using cast to enum
 {
   const auto DEGREES_PER_DIRECTION = 360 / TCD;
@@ -118,7 +119,7 @@ auto CompassDirectionOf2(const double inBearing) -> TCompassDirection           
   return points[ int( (inBearing + ANTI_CLOCKWISE_OFFSET ) / DEGREES_PER_DIRECTION ) ];
 }
 
-
+// - - - - - - - - -
 
 const TCompassDirection halfpoints [ TCD*2 ]
 					  = {          cdNorth, cdNNE, cdNNE, cdNE, cdNE, cdENE, cdENE,
@@ -133,9 +134,10 @@ auto CompassDirectionOf3(const double inBearing) -> TCompassDirection           
   return halfpoints[ int (inBearing  / DEGREES_PER_DIRECTION) ];
 }
 
-
+// - - - - - - - - -
 
 // Courtesy of Lachlan Gemmell - ADUG User Forum - https://forums.adug.org.au/t/optimize-this-compass-directions-code/59083/1
+
 TCompassDirection CompassDirectionOf(const double inBearing)
 {
   constexpr const auto DEGREES_PER_DIRECTION = 360.0 / TCD;
@@ -193,21 +195,19 @@ TCompassDirection CompassDirectionOf(const double inBearing)
 	case int( (15 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) + BOUNDARY_MARGIN
 	 ... int( (16 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) - BOUNDARY_MARGIN      :      return cdNNW;
 
-	case int( ( 0 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) + BOUNDARY_MARGIN + 360
-	 ... 360        /*{ negative degree values converted to almost 360 degree values }*/    :      return cdNorth;
+	case int( (16 * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET ) + BOUNDARY_MARGIN
+	 ... 360            /*{ neg degree value converted to almost 360 degree values }*/      :      return cdNorth;
 
-	default : {     /*{ bearing is between the integer boundary margins, so do
-						an exact check against the floating point boundaries } */
+	default : {         /*{ bearing is between the integer boundary margins, so do
+							an exact check against the floating point boundaries } */
 	  for (int cd = 0; cd < TCD; ++cd)
-		if ( inBearing <= (((cd + 1) * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET) )
-		  return( points[ cd ] );
-	  return cdNorth;                           /*{ edited from original post - Thanks Mark Griffiths }*/
+		   if ( inBearing <= (((cd + 1) * DEGREES_PER_DIRECTION) - ANTI_CLOCKWISE_OFFSET) )        return( points[ cd ] );
+	  return cdNorth;   /*{ edited from original post - Thanks Mark Griffiths }*/
 	}
   }
 }
 
-
-
+// - - - - - - - - -
 
 TCompassDirection CompassDirectionOf4(const double inBearing)
 {

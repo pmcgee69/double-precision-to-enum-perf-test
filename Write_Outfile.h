@@ -16,7 +16,7 @@ void Write_Output (const TOut_list O) {
 
 	//for (int i=0; i < 10000; i++) 	  std::cout << O[i] << " . ";
 
-	std::cout << "\n  done. \n" << O[9000];
+	std::cout << "\n  done. \n" << O[9000];                  // need to use O for something or it is optimised away
 
 /*
   var f := Tfile.CreateText('output_bin.csv');

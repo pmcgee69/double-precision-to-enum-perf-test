@@ -21,10 +21,10 @@ int main()
 	for (int j =0; j < 1000; ++j)   {
 		for (int i = 0; i < 10000; ++i) {
 			 //O[i] = CompassDirnByBinary ( data[i] );            // d 140 ms  // c++ 100 ms
-			 //O[i] = CompassDirectionOf  ( data[i] );            // d 245 ms  // c++ 190 ms
 			 //O[i] = CompassDirectionOf2 ( data[i] );            // d 170 ms  // c++ 100 ms (40 ms)
-			 //O[i] = CompassDirectionOf3 ( data[i] );            // d 150 ms  // c++  40 ms
-			 O[i] = CompassDirectionOf4 ( data[i] );              // d     ms  // c++ 160 ms
+			 O[i] = CompassDirectionOf3 ( data[i] );              // d 150 ms  // c++  40 ms
+			 //O[i] = CompassDirectionOf  ( data[i] );            // d 245 ms  // c++ 190 ms
+			 //O[i] = CompassDirectionOf4 ( data[i] );            // d     ms  // c++ 160 ms
 		}
 	}
 	run = T.ElapsedMilliseconds;
