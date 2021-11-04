@@ -6,16 +6,16 @@ Tested in Delphi 11 and C++Builder 10.3.3 Community Edition.
 
 Results tl;dr
 ```
-			 O[i] = CompassDirnByBinary ( data[i] );            // d 140 ms  // c++ 100 ms
-			 O[i] = CompassDirectionOf  ( data[i] );            // d 245 ms  // c++ TBA
-			 O[i] = CompassDirectionOf2 ( data[i] );            // d 170 ms  // c++ 100 ms (40 ms)
-			 O[i] = CompassDirectionOf3 ( data[i] );            // d 180 ms  // c++  40 ms
+		 O[i] = CompassDirnByBinary ( data[i] );            // d 140 ms  // c++ 100 ms
+		 O[i] = CompassDirectionOf  ( data[i] );            // d 245 ms  // c++ 190 ms
+		 O[i] = CompassDirectionOf2 ( data[i] );            // d 170 ms  // c++ 100 ms (40 ms)
+		 O[i] = CompassDirectionOf3 ( data[i] );            // d 150 ms  // c++  40 ms
 ```       
        
 A standout point was that returning an *int-cast-to-enum* was outperformed in c++ by *indexing-into-array-of-enum* ... but little difference in Delphi.
 
 
-The main project files
+The main project files:
 - Project_dbl_speed.dpr 
 - double_speed.cpp 
 
