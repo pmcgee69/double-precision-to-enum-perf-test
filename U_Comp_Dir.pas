@@ -22,14 +22,9 @@ const
                       = ( $3680, $4680, $50E0, $5680, $5C20, $60E0, $63B0, $6680,
                           $6950, $6C20, $6EF0, $70E0, $7248, $73B0, $7518, $7680  );
 
-        intcp : array [ 0..15 ] of integer
+           cp : array [ 0..15 ] of integer
                       = ( $3680, $4680, $50E0, $5680, $5C20, $60E0, $63B0, $6680,
                           $6950, $6C20, $6EF0, $70E0, $7248, $73B0, $7518, $7680  );
-
-       cardcp : array [ 0..15 ] of integer
-                      = ( $368000, $468000, $50E000, $568000, $5C2000, $60E000, $63B000, $668000,
-                          $695000, $6C2000, $6EF000, $70E000, $724800, $73B000, $751800, $768000  );
-
 
             d : array [ TCompassDirection ] of double
                       = (   22.5,  45.0,  67.5,  90.0, 112.5, 135.0, 157.5, 180.0,
@@ -39,8 +34,7 @@ const
 function CompassDirnByBinary(const inBearing : double) : TCompassDirection;
 var
   I  : integer;
-  //Bytes: array[0..7] of Byte absolute inBearing;
-  Cards: array[0..1] of cardinal absolute inBearing;
+  Bytes: array[0..7] of Byte absolute inBearing;
 
 begin
 
@@ -52,8 +46,7 @@ begin
 // - - - - - - - - -
 
   //I := inBearing.Bytes[6] shl 8 + inBearing.Bytes[5];
-  //I := Bytes[6] shl 8 + Bytes[5];                                               // saves 35 ms
-  I := (Cards[1] and $00FFFF00);
+  I := Bytes[6] shl 8 + Bytes[5];                                               // saves 35 ms
 
 // - - - - - - - - -
 
@@ -64,76 +57,42 @@ begin
 // - - - - - - - - -
 
 //  for var cd := 0 to 15 do                                                    // 170 ms
-//      if I < intcp[cd] then
+//      if I < cp[cd] then
 //        exit( TCompassDirection(cd) );                                        // points[cd] = slower
 
 // - - - - - - - - -
 
-//    if I < intcp[ 0] then exit( TCompassDirection( 0) )       // 135 ms
-//    else
-//    if I < intcp[ 1] then exit( TCompassDirection( 1) )
-//    else
-//    if I < intcp[ 2] then exit( TCompassDirection( 2) )
-//    else
-//    if I < intcp[ 3] then exit( TCompassDirection( 3) )
-//    else
-//    if I < intcp[ 4] then exit( TCompassDirection( 4) )
-//    else
-//    if I < intcp[ 5] then exit( TCompassDirection( 5) )
-//    else
-//    if I < intcp[ 6] then exit( TCompassDirection( 6) )
-//    else
-//    if I < intcp[ 7] then exit( TCompassDirection( 7) )
-//    else
-//    if I < intcp[ 8] then exit( TCompassDirection( 8) )
-//    else
-//    if I < intcp[ 9] then exit( TCompassDirection( 9) )
-//    else
-//    if I < intcp[10] then exit( TCompassDirection(10) )
-//    else
-//    if I < intcp[11] then exit( TCompassDirection(11) )
-//    else
-//    if I < intcp[12] then exit( TCompassDirection(12) )
-//    else
-//    if I < intcp[13] then exit( TCompassDirection(13) )
-//    else
-//    if I < intcp[14] then exit( TCompassDirection(14) )
-//    else
-//    if I < intcp[15] then exit( TCompassDirection(15) )
-
-// - - - - - - - - -
-
-    if I < cardcp[ 0] then exit( TCompassDirection( 0) )       // 135 ms
+    if I < cp[ 0] then exit( TCompassDirection( 0) )       // 135 ms
     else
-    if I < cardcp[ 1] then exit( TCompassDirection( 1) )
+    if I < cp[ 1] then exit( TCompassDirection( 1) )
     else
-    if I < cardcp[ 2] then exit( TCompassDirection( 2) )
+    if I < cp[ 2] then exit( TCompassDirection( 2) )
     else
-    if I < cardcp[ 3] then exit( TCompassDirection( 3) )
+    if I < cp[ 3] then exit( TCompassDirection( 3) )
     else
-    if I < cardcp[ 4] then exit( TCompassDirection( 4) )
+    if I < cp[ 4] then exit( TCompassDirection( 4) )
     else
-    if I < cardcp[ 5] then exit( TCompassDirection( 5) )
+    if I < cp[ 5] then exit( TCompassDirection( 5) )
     else
-    if I < cardcp[ 6] then exit( TCompassDirection( 6) )
+    if I < cp[ 6] then exit( TCompassDirection( 6) )
     else
-    if I < cardcp[ 7] then exit( TCompassDirection( 7) )
+    if I < cp[ 7] then exit( TCompassDirection( 7) )
     else
-    if I < cardcp[ 8] then exit( TCompassDirection( 8) )
+    if I < cp[ 8] then exit( TCompassDirection( 8) )
     else
-    if I < cardcp[ 9] then exit( TCompassDirection( 9) )
+    if I < cp[ 9] then exit( TCompassDirection( 9) )
     else
-    if I < cardcp[10] then exit( TCompassDirection(10) )
+    if I < cp[10] then exit( TCompassDirection(10) )
     else
-    if I < cardcp[11] then exit( TCompassDirection(11) )
+    if I < cp[11] then exit( TCompassDirection(11) )
     else
-    if I < cardcp[12] then exit( TCompassDirection(12) )
+    if I < cp[12] then exit( TCompassDirection(12) )
     else
-    if I < cardcp[13] then exit( TCompassDirection(13) )
+    if I < cp[13] then exit( TCompassDirection(13) )
     else
-    if I < cardcp[14] then exit( TCompassDirection(14) )
+    if I < cp[14] then exit( TCompassDirection(14) )
     else
-    if I < cardcp[15] then exit( TCompassDirection(15) )
+    if I < cp[15] then exit( TCompassDirection(15) )
 
 end;
 
