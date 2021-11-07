@@ -28,6 +28,10 @@ const int         cp[ TCD ]
 					  = { 0x3680, 0x4680, 0x50E0, 0x5680, 0x5C20, 0x60E0, 0x63B0, 0x6680,
 						  0x6950, 0x6C20, 0x6EF0, 0x70E0, 0x7248, 0x73B0, 0x7518, 0x7680  };
 
+const int        cp2[ TCD ]
+					  = { 0x368000, 0x468000, 0x50E000, 0x568000, 0x5C2000, 0x60E000, 0x63B000, 0x668000,
+						  0x695000, 0x6C2000, 0x6EF000, 0x70E000, 0x724800, 0x73B000, 0x751800, 0x768000  };
+
 const double       d[ TCD ]
 					  = {   22.5,  45.0,  67.5,  90.0, 112.5, 135.0, 157.5, 180.0,
 						   202.5, 225.0, 247.5, 270.0, 292.5, 315.0, 337.5, 360.0 };
@@ -35,20 +39,21 @@ const double       d[ TCD ]
 
 auto CompassDirnByBinary(const double inBearing) -> TCompassDirection
 {
-  int I;
-  //Bytes: array[0..7] of Byte absolute inBearing;           {Delphi}
-
 
 //  for (auto cd = 0; cd < TCD; ++cd)                                                  // d   235 ms
 //	   if ( inBearing < d[cd] )   return TCompassDirection(cd);                        // c++ 170 ms
 
 // - - - - - - - - -
 
+  //  Bytes: array[0..7] of Byte absolute inBearing;         {Delphi}
   //  I := inBearing.Bytes[6] shl 8 + inBearing.Bytes[5];    {Delphi}
   //  I := Bytes[6] shl 8 + Bytes[5];                        {Delphi}                  // d saves 35 ms
-  const auto Bytes = (std::byte*)(&inBearing);
 
-  I = ( (int)Bytes[6] << 8 ) + (int)Bytes[5];
+//  const auto Bytes = (std::byte*)(&inBearing);
+//			   int I = ( (int)Bytes[6] << 8 ) + (int)Bytes[5];
+
+  const auto Bytes = (uint32_t*)(&inBearing);
+			 int J = ( (int)Bytes[1] & 0xFFFF00 ) ;
 
 // - - - - - - - - -
 
@@ -60,9 +65,8 @@ auto CompassDirnByBinary(const double inBearing) -> TCompassDirection
 
 // - - - - - - - - -
 
-  for (int cd = 0; cd < TCD; ++cd)                                                     // d   170 ms
-	  if ( I < cp[cd] )  return TCompassDirection(cd);                                 // c++ 100 ms
-
+//  for (int cd = 0; cd < TCD; ++cd)                                                   // d   170 ms
+//	  if ( I < cp[cd] )  return TCompassDirection(cd);                                 // c++ 100 ms
 
 // - - - - - - - - -
 
@@ -98,7 +102,46 @@ auto CompassDirnByBinary(const double inBearing) -> TCompassDirection
 //	else
 //	if ( I < cp[15] )  { return TCompassDirection(15); }
 
-}
+// - - - - - - - - -
+
+//  for (int cd = 0; cd < TCD; ++cd)                                                   // d   170 ms
+//	  if ( J < cp2[cd] )  return TCompassDirection(cd);                                // c++ 100 ms
+
+// - - - - - - - - -
+
+	if ( J < cp2[ 0] )  { return TCompassDirection( 0); }                              // d   135 ms
+	else                                                                               // c++  85 ms
+	if ( J < cp2[ 1] )  { return TCompassDirection( 1); }
+	else
+	if ( J < cp2[ 2] )  { return TCompassDirection( 2); }
+	else
+	if ( J < cp2[ 3] )  { return TCompassDirection( 3); }
+	else
+	if ( J < cp2[ 4] )  { return TCompassDirection( 4); }
+	else
+	if ( J < cp2[ 5] )  { return TCompassDirection( 5); }
+	else
+	if ( J < cp2[ 6] )  { return TCompassDirection( 6); }
+	else
+	if ( J < cp2[ 7] )  { return TCompassDirection( 7); }
+	else
+	if ( J < cp2[ 8] )  { return TCompassDirection( 8); }
+	else
+	if ( J < cp2[ 9] )  { return TCompassDirection( 9); }
+	else
+	if ( J < cp2[10] )  { return TCompassDirection(10); }
+	else
+	if ( J < cp2[11] )  { return TCompassDirection(11); }
+	else
+	if ( J < cp2[12] )  { return TCompassDirection(12); }
+	else
+	if ( J < cp2[13] )  { return TCompassDirection(13); }
+	else
+	if ( J < cp2[14] )  { return TCompassDirection(14); }
+	else
+	if ( J < cp2[15] )  { return TCompassDirection(15); }
+
+}
 
 // - - - - - - - - -
 
@@ -115,8 +158,8 @@ auto CompassDirectionOf2(const double inBearing) -> TCompassDirection           
   const auto DEGREES_PER_DIRECTION = 360 / TCD;
   const auto ANTI_CLOCKWISE_OFFSET = DEGREES_PER_DIRECTION / 2;
 
-  //return TCompassDirection( ( int(inBearing) + ANTI_CLOCKWISE_OFFSET ) / DEGREES_PER_DIRECTION);
-  return points[ int( (inBearing + ANTI_CLOCKWISE_OFFSET ) / DEGREES_PER_DIRECTION ) ];
+  return TCompassDirection( int( (inBearing + ANTI_CLOCKWISE_OFFSET ) / DEGREES_PER_DIRECTION) );
+  //return points[ int( (inBearing + ANTI_CLOCKWISE_OFFSET ) / DEGREES_PER_DIRECTION ) ];
 }
 
 // - - - - - - - - -
