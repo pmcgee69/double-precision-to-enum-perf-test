@@ -21,10 +21,10 @@ begin
     T.Start;
     for var j := 1 to 1000 do
         for var i := 1 to 10_000 do
-             //O[i] := CompassDirnByBinary ( data[i] );           // 140 ms
+             O[i] := CompassDirnByBinary ( data[i] );           // 140 ms
              //O[i] := CompassDirectionOf  ( data[i] );           // 245 ms
              //O[i] := CompassDirectionOf2 ( data[i] );           // 180 ms
-             O[i] := CompassDirectionOf3 ( data[i] );             // 150 ms
+             //O[i] := CompassDirectionOf3 ( data[i] );             // 150 ms
 
     run := T.ElapsedMilliseconds;
     tot := tot + run;
